@@ -1,0 +1,122 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMW Problem Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('bmw_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-message {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            max-width: 80%;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #772020; /* BMW Blue */
+            color: #fff;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #772020; 
+            color: #000000;
+        }
+
+        input {
+            width: 80%;
+            padding: 8px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px;
+            background-color: #772020; /* BMW Blue */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #772020; /* Darker BMW Blue */
+        }
+
+        #bmw-logo {
+            width: 100px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <img src="bmw_logo.png" alt="BMW Logo" id="bmw-logo">
+
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-message bot-message">Welcome! Type a BMW problem to get assistance.</div>
+    </div>
+
+    <input type="text" id="wordInput" placeholder="Type a BMW problem">
+    <button onclick="getChatbotReply()">Get Reply</button>
+
+    <script>
+        async function getChatbotReply() {
+            const wordInput = document.getElementById('wordInput').value;
+            const chatContainer = document.getElementById('chatContainer');
+
+            // User message
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('chat-message', 'user-message');
+            userMessage.textContent = wordInput;
+            chatContainer.appendChild(userMessage);
+
+            try {
+                const response = await fetch(`http://localhost:3000/getReply/${wordInput}`);
+                const data = await response.json();
+
+                // Bot message
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('chat-message', 'bot-message');
+                botMessage.textContent = response.ok ? data.reply : 'Reply not found';
+                chatContainer.appendChild(botMessage);
+
+            } catch (error) {
+                console.error('Error fetching chatbot reply: ', error);
+            }
+
+            // Clear input
+            document.getElementById('wordInput').value = '';
+        }
+    </script>
+</body>
+</html>
